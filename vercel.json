@@ -1,0 +1,6 @@
+{
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/documents/:path*", "destination": "/DOCUMENTS/:path*" }
+  ]
+}

@@ -1,14 +1,23 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
 
 export default function Documents({ onOpenLightbox }) {
-  // Detected document file states
-  const reportAvailable = true;
-  const reportPath = '/DOCUMENTS/REPORT/Industrial_Automation_Load_Management_System_Final_Report.docx';
-  const reportFileName = 'Industrial_Automation_Load_Management_System_Final_Report.docx';
-  
-  // Research paper is checked against project folder; currently none present
-  const researchPaperAvailable = false;
-  const researchPaperPath = null;
+  const [activeDoc, setActiveDoc] = useState(null);
+  const viewerRef = useRef(null);
+
+  const reportPath = '/documents/report.pdf';
+  const reportFileName = 'report.pdf';
+
+  const researchPaperPath = '/documents/research-paper.pdf';
+  const researchPaperFileName = 'research-paper.pdf';
+
+  const handleOpenDoc = (title, src) => {
+    setActiveDoc({ title, src });
+    setTimeout(() => {
+      if (viewerRef.current) {
+        viewerRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 100);
+  };
 
   const projectImages = [
     {
@@ -37,7 +46,7 @@ export default function Documents({ onOpenLightbox }) {
           </p>
         </div>
 
-        {/* Section 1 & 2: Project Report & Research Paper */}
+        {/* Section 1 & 2: Project Report & Research Paper Cards */}
         <div className="documents-grid">
           {/* SECTION 1: PROJECT REPORT */}
           <div className="doc-card">
@@ -56,7 +65,7 @@ export default function Documents({ onOpenLightbox }) {
                   <h3 className="doc-title">Project Report</h3>
                   <div className="doc-status-badge status-available">
                     <span className="badge-dot" style={{ backgroundColor: 'var(--accent-green)', boxShadow: '0 0 8px var(--accent-green)' }}></span>
-                    File Verified & Available
+                    PDF Verified & Ready
                   </div>
                 </div>
               </div>
@@ -67,47 +76,25 @@ export default function Documents({ onOpenLightbox }) {
               </p>
 
               <div style={{ background: 'rgba(0, 0, 0, 0.3)', padding: '0.8rem 1rem', borderRadius: 'var(--radius-sm)', marginBottom: '1.5rem', border: '1px solid var(--border-color)', fontSize: '0.85rem' }}>
-                <div style={{ color: 'var(--text-secondary)' }}>Detected Document:</div>
+                <div style={{ color: 'var(--text-secondary)' }}>Embedded Document:</div>
                 <div style={{ color: 'var(--text-highlight)', fontWeight: 600, wordBreak: 'break-all' }}>{reportFileName}</div>
-                <div style={{ color: 'var(--text-muted)', fontSize: '0.78rem', marginTop: '0.2rem' }}>Format: Microsoft Word (.docx) &bull; Size: ~1.3 MB</div>
+                <div style={{ color: 'var(--text-muted)', fontSize: '0.78rem', marginTop: '0.2rem' }}>Format: Adobe PDF (.pdf) &bull; Size: ~1.1 MB</div>
               </div>
             </div>
 
             <div className="doc-actions">
-              {reportAvailable ? (
-                <>
-                  <a
-                    href={reportPath}
-                    download={reportFileName}
-                    className="btn btn-primary"
-                    style={{ flex: 1 }}
-                  >
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                      <polyline points="7 10 12 15 17 10"></polyline>
-                      <line x1="12" y1="15" x2="12" y2="3"></line>
-                    </svg>
-                    Download Report
-                  </a>
-                  <a
-                    href={reportPath}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="btn btn-outline"
-                  >
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                      <polyline points="15 3 21 3 21 9"></polyline>
-                      <line x1="10" y1="14" x2="21" y2="3"></line>
-                    </svg>
-                    Open File
-                  </a>
-                </>
-              ) : (
-                <div className="btn btn-outline btn-disabled" style={{ width: '100%' }}>
-                  Project Report Coming Soon
-                </div>
-              )}
+              <button
+                type="button"
+                className={`btn ${activeDoc?.src === reportPath ? 'btn-primary' : 'btn-outline'}`}
+                style={{ width: '100%', justifyContent: 'center' }}
+                onClick={() => handleOpenDoc('Project Report', reportPath)}
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+                {activeDoc?.src === reportPath ? 'Currently Viewing Report' : 'View Report'}
+              </button>
             </div>
           </div>
 
@@ -123,9 +110,9 @@ export default function Documents({ onOpenLightbox }) {
                 </div>
                 <div>
                   <h3 className="doc-title">Research Paper</h3>
-                  <div className="doc-status-badge status-soon">
-                    <span className="badge-dot" style={{ backgroundColor: 'var(--accent-amber)', boxShadow: '0 0 8px var(--accent-amber)' }}></span>
-                    Research Paper Coming Soon
+                  <div className="doc-status-badge status-available">
+                    <span className="badge-dot" style={{ backgroundColor: 'var(--accent-green)', boxShadow: '0 0 8px var(--accent-green)' }}></span>
+                    PDF Verified & Ready
                   </div>
                 </div>
               </div>
@@ -136,44 +123,86 @@ export default function Documents({ onOpenLightbox }) {
               </p>
 
               <div style={{ background: 'rgba(0, 0, 0, 0.3)', padding: '0.8rem 1rem', borderRadius: 'var(--radius-sm)', marginBottom: '1.5rem', border: '1px solid var(--border-color)', fontSize: '0.85rem' }}>
-                <div style={{ color: 'var(--text-secondary)' }}>Status Scan:</div>
-                <div style={{ color: 'var(--accent-amber)', fontWeight: 500 }}>
-                  DOCUMENTS/RESEARCH PAPER directory scanned &bull; Pending conference / journal upload.
-                </div>
-                <div style={{ color: 'var(--text-muted)', fontSize: '0.78rem', marginTop: '0.2rem' }}>
-                  No published manuscript file detected currently.
-                </div>
+                <div style={{ color: 'var(--text-secondary)' }}>Embedded Document:</div>
+                <div style={{ color: 'var(--text-highlight)', fontWeight: 600, wordBreak: 'break-all' }}>{researchPaperFileName}</div>
+                <div style={{ color: 'var(--text-muted)', fontSize: '0.78rem', marginTop: '0.2rem' }}>Format: Adobe PDF (.pdf) &bull; Size: ~447 KB</div>
               </div>
             </div>
 
             <div className="doc-actions">
-              {researchPaperAvailable ? (
-                <a
-                  href={researchPaperPath}
-                  download
-                  className="btn btn-primary"
-                  style={{ width: '100%' }}
-                >
-                  Download Research Paper
-                </a>
-              ) : (
-                <button
-                  type="button"
-                  className="btn btn-outline btn-disabled"
-                  style={{ width: '100%', justifyContent: 'center' }}
-                  disabled
-                >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <line x1="12" y1="8" x2="12" y2="12"></line>
-                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                  </svg>
-                  Research Paper Coming Soon
-                </button>
-              )}
+              <button
+                type="button"
+                className={`btn ${activeDoc?.src === researchPaperPath ? 'btn-primary' : 'btn-outline'}`}
+                style={{ width: '100%', justifyContent: 'center' }}
+                onClick={() => handleOpenDoc('Research Paper', researchPaperPath)}
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+                {activeDoc?.src === researchPaperPath ? 'Currently Viewing Paper' : 'View Research Paper'}
+              </button>
             </div>
           </div>
         </div>
+
+        {/* EMBEDDED PDF VIEWER SECTION */}
+        {activeDoc && (
+          <div ref={viewerRef} className="pdf-viewer-section" style={{ marginTop: '2.5rem', marginBottom: '3.5rem' }}>
+            <div className="tech-card" style={{ padding: '1.5rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem', paddingBottom: '1rem', borderBottom: '1px solid var(--border-color)', flexWrap: 'wrap', gap: '1rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <div className="doc-icon" style={{ width: '42px', height: '42px' }}>
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                      <polyline points="14 2 14 8 20 8"></polyline>
+                      <line x1="16" y1="13" x2="8" y2="13"></line>
+                      <line x1="16" y1="17" x2="8" y2="17"></line>
+                      <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="font-tech" style={{ fontSize: '1.35rem', color: '#ffffff', margin: 0 }}>
+                      {activeDoc.title}
+                    </h3>
+                    <span style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
+                      Embedded In-Page PDF Viewer &bull; Interactive Multi-Page Scrolling
+                    </span>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <span className="badge" style={{ fontSize: '0.75rem' }}>
+                    <span className="badge-dot" style={{ backgroundColor: 'var(--accent-green)', boxShadow: '0 0 8px var(--accent-green)' }}></span>
+                    Viewing Active
+                  </span>
+                  <button
+                    type="button"
+                    className="btn btn-outline"
+                    style={{ padding: '0.45rem 1rem', fontSize: '0.85rem' }}
+                    onClick={() => setActiveDoc(null)}
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="18" y1="6" x2="6" y2="18"></line>
+                      <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                    Close Viewer
+                  </button>
+                </div>
+              </div>
+
+              <div style={{ background: '#020617', borderRadius: 'var(--radius-md)', overflow: 'hidden', border: '1px solid var(--border-color)', minHeight: '520px' }}>
+                <iframe
+                  src={activeDoc.src}
+                  width="100%"
+                  height="750px"
+                  style={{ border: 'none', display: 'block', minHeight: '600px' }}
+                  title={activeDoc.title}
+                />
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* SECTION 3: PROJECT IMAGES */}
         <div className="project-images-section">
